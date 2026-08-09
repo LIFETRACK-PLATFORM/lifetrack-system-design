@@ -40,6 +40,7 @@ import { AppSidebar } from "@/components/organisms/app-sidebar"
 import {
   Dialog,
   DialogClose,
+  DialogCloseButton,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -1310,6 +1311,37 @@ const WEEKDAY_OPTIONS = [
 
 const EXERCISE_ACCENTS: AccentKey[] = ["primary", "success", "warning", "accent"]
 
+const MEASURE_MODE_STYLE = {
+  reps: {
+    color: "var(--lt-primary)",
+    border: "color-mix(in srgb, var(--lt-primary) 45%, var(--lt-border))",
+    bg: "color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1))",
+  },
+  duration: {
+    color: "var(--lt-warning)",
+    border: "color-mix(in srgb, var(--lt-warning) 45%, var(--lt-border))",
+    bg: "color-mix(in srgb, var(--lt-warning) 10%, var(--lt-surface-1))",
+  },
+} as const
+
+const APPOINTMENT_TYPE_STYLE = {
+  terapia: {
+    color: "var(--lt-primary)",
+    border: "var(--lt-primary)",
+    bg: "color-mix(in srgb, var(--lt-primary) 12%, var(--lt-surface-1))",
+    idleIcon: "color-mix(in srgb, var(--lt-primary) 55%, var(--lt-text-3))",
+  },
+  control: {
+    color: "var(--lt-success)",
+    border: "var(--lt-success)",
+    bg: "color-mix(in srgb, var(--lt-success) 12%, var(--lt-surface-1))",
+    idleIcon: "color-mix(in srgb, var(--lt-success) 55%, var(--lt-text-3))",
+  },
+} as const
+
+const MODAL_FOOTER_CLASS =
+  "lt:border-t lt:border-primary/20 lt:bg-[linear-gradient(180deg,var(--lt-surface-1),color-mix(in_srgb,var(--lt-primary)_7%,var(--lt-surface-2)))] lt:px-6 lt:py-4"
+
 function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[number]) => void }) {
   const [open, setOpen] = React.useState(false)
   const [name, setName] = React.useState("")
@@ -1388,43 +1420,35 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
           Agregar ejercicio
         </Button>
       </DialogTrigger>
-      <DialogContent className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[540px]">
+      <DialogContent
+        showCloseButton={false}
+        className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[540px]"
+      >
         <form onSubmit={handleSubmit}>
           <div
             style={{
               display: "flex",
               alignItems: "flex-start",
-              justifyContent: "space-between",
               gap: 16,
-              padding: "20px 48px 0 24px",
+              padding: "20px 24px 0",
             }}
           >
-            <div>
-              <p className="lt:font-mono lt:text-[11px] lt:font-semibold lt:tracking-[0.08em] lt:text-primary lt:uppercase">
-                Protocolo · ejercicio
-              </p>
-              <DialogTitle className="lt:mt-1 lt:font-heading lt:text-body-lg">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <Badge variant="default" className="lt:gap-1.5">
+                  <Activity size={12} />
+                  Ejercicio
+                </Badge>
+                <Badge variant="secondary">Protocolo</Badge>
+              </div>
+              <DialogTitle className="lt:font-heading lt:text-body-lg">
                 Configurar volumen
               </DialogTitle>
               <DialogDescription className="lt:mt-1 lt:text-label-md lt:text-text-3">
                 Definí series, repeticiones y frecuencia semanal.
               </DialogDescription>
             </div>
-            <div
-              style={{
-                display: "flex",
-                width: 44,
-                height: 44,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 12,
-                background: "color-mix(in srgb, var(--lt-primary) 14%, var(--lt-surface-2))",
-                color: "var(--lt-primary)",
-                flexShrink: 0,
-              }}
-            >
-              <Activity size={22} strokeWidth={2} />
-            </div>
+            <DialogCloseButton />
           </div>
 
           <div style={{ padding: "16px 24px 0" }}>
@@ -1436,13 +1460,13 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
                 gap: 10,
                 padding: "18px 16px",
                 borderRadius: 14,
-                border: "1px solid color-mix(in srgb, var(--lt-primary) 30%, var(--lt-border))",
+                border: "1px solid color-mix(in srgb, var(--lt-primary) 25%, var(--lt-border))",
                 background:
-                  "linear-gradient(135deg, color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1)), var(--lt-surface-2))",
+                  "linear-gradient(135deg, color-mix(in srgb, var(--lt-primary) 8%, var(--lt-surface-1)), color-mix(in srgb, var(--lt-success) 6%, var(--lt-surface-2)))",
               }}
             >
               <div style={{ textAlign: "center" }}>
-                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                <p className="lt:text-[11px] lt:font-semibold lt:text-primary lt:uppercase">
                   Series
                 </p>
                 <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
@@ -1451,17 +1475,31 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
               </div>
               <span className="lt:font-metric lt:text-xl lt:text-text-3">×</span>
               <div style={{ textAlign: "center" }}>
-                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                <p
+                  className="lt:text-[11px] lt:font-semibold lt:uppercase"
+                  style={{
+                    color:
+                      measureMode === "duration" ? "var(--lt-warning)" : "var(--lt-accent-tint)",
+                  }}
+                >
                   {measureMode === "reps" ? "Reps" : "Min"}
                 </p>
-                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
+                <p
+                  className="lt:mt-1 lt:font-metric lt:text-metric-md"
+                  style={{
+                    color:
+                      measureMode === "duration" ? "var(--lt-warning)" : "var(--lt-accent-tint)",
+                  }}
+                >
                   {measureMode === "reps" ? repsValue : durationValue}
                 </p>
               </div>
               <span className="lt:font-metric lt:text-xl lt:text-text-3">=</span>
               <div style={{ textAlign: "center" }}>
-                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">Total</p>
-                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
+                <p className="lt:text-[11px] lt:font-semibold lt:text-success lt:uppercase">
+                  Total
+                </p>
+                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-success">
                   {previewTotal}
                   <span className="lt:ml-0.5 lt:text-label-md lt:text-text-3">
                     {measureMode === "reps" ? "reps" : "min"}
@@ -1491,6 +1529,7 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
               ).map((option) => {
                 const active = measureMode === option.value
                 const Icon = option.icon
+                const tone = MEASURE_MODE_STYLE[option.value]
 
                 return (
                   <button
@@ -1504,18 +1543,20 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
                       gap: 6,
                       padding: "12px 14px",
                       borderRadius: 12,
-                      border: active ? "2px solid var(--lt-primary)" : "1px solid var(--lt-border)",
-                      background: active
-                        ? "color-mix(in srgb, var(--lt-primary) 8%, var(--lt-surface-1))"
-                        : "var(--lt-surface-1)",
+                      border: active ? `2px solid ${tone.color}` : `1px solid ${tone.border}`,
+                      background: active ? tone.bg : "var(--lt-surface-1)",
                       cursor: "pointer",
                       textAlign: "left",
                     }}
                   >
-                    <Icon size={16} color={active ? "var(--lt-primary)" : "var(--lt-text-3)"} />
+                    <Icon
+                      size={16}
+                      color={active ? tone.color : tone.color}
+                      style={{ opacity: active ? 1 : 0.55 }}
+                    />
                     <span
                       className="lt:text-sm lt:font-semibold"
-                      style={{ color: active ? "var(--lt-primary)" : "var(--lt-text-1)" }}
+                      style={{ color: active ? tone.color : "var(--lt-text-1)" }}
                     >
                       {option.label}
                     </span>
@@ -1573,8 +1614,14 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
             <div>
               <span className="lt:text-xs lt:font-semibold lt:text-text-3">Frecuencia semanal</span>
               <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
-                {WEEKDAY_OPTIONS.map((day) => {
+                {WEEKDAY_OPTIONS.map((day, index) => {
                   const selected = days.includes(day.key)
+                  const dayColor =
+                    index % 3 === 0
+                      ? "var(--lt-primary)"
+                      : index % 3 === 1
+                        ? "var(--lt-success)"
+                        : "var(--lt-warning)"
 
                   return (
                     <button
@@ -1583,12 +1630,20 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
                       aria-pressed={selected}
                       aria-label={`Día ${day.label}`}
                       onClick={() => toggleDay(day.key)}
-                      className={cn(
-                        "lt:flex lt:size-8 lt:items-center lt:justify-center lt:rounded-full lt:text-[11px] lt:font-bold lt:transition-colors",
+                      className="lt:flex lt:size-8 lt:items-center lt:justify-center lt:rounded-full lt:text-[11px] lt:font-bold lt:transition-colors"
+                      style={
                         selected
-                          ? "lt:bg-primary lt:text-white"
-                          : "lt:border lt:border-border lt:bg-surface-1 lt:text-text-3"
-                      )}
+                          ? {
+                              background: dayColor,
+                              color: "white",
+                              border: `1px solid ${dayColor}`,
+                            }
+                          : {
+                              background: "var(--lt-surface-1)",
+                              color: "var(--lt-text-3)",
+                              border: "1px solid var(--lt-border)",
+                            }
+                      }
                     >
                       {day.label}
                     </button>
@@ -1647,7 +1702,7 @@ function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[num
             ) : null}
           </div>
 
-          <DialogFooter className="lt:border-t lt:border-primary/15 lt:bg-surface-2 lt:px-6 lt:py-4">
+          <DialogFooter className={MODAL_FOOTER_CLASS}>
             <DialogClose asChild>
               <Button variant="outline" type="button" className="lt:min-w-[108px]">
                 Cancelar
@@ -1771,7 +1826,10 @@ function AddAppointmentDialog({
           Agendar cita
         </Button>
       </DialogTrigger>
-      <DialogContent className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[760px]">
+      <DialogContent
+        showCloseButton={false}
+        className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[760px]"
+      >
         <form onSubmit={handleSubmit}>
           <div
             style={{
@@ -1782,14 +1840,16 @@ function AddAppointmentDialog({
             <div
               style={{
                 padding: 20,
-                borderRight: "1px solid var(--lt-border)",
+                borderRight:
+                  "1px solid color-mix(in srgb, var(--lt-primary) 20%, var(--lt-border))",
                 background:
-                  "linear-gradient(180deg, color-mix(in srgb, var(--lt-primary) 8%, var(--lt-surface-2)), var(--lt-surface-2))",
+                  "linear-gradient(165deg, color-mix(in srgb, var(--lt-primary) 16%, var(--lt-surface-2)), color-mix(in srgb, var(--lt-success) 8%, var(--lt-surface-1)) 55%, var(--lt-surface-1))",
               }}
             >
-              <p className="lt:font-mono lt:text-[11px] lt:font-semibold lt:tracking-[0.08em] lt:text-primary lt:uppercase">
+              <Badge variant="default" className="lt:mb-2 lt:gap-1.5">
+                <CalendarDays size={12} />
                 Agenda
-              </p>
+              </Badge>
               <DialogTitle className="lt:mt-1 lt:font-heading lt:text-body-lg">
                 Elegí el día
               </DialogTitle>
@@ -1808,11 +1868,11 @@ function AddAppointmentDialog({
                     marginTop: 12,
                     padding: "10px 12px",
                     borderRadius: 10,
-                    border: "1px solid color-mix(in srgb, var(--lt-primary) 35%, var(--lt-border))",
-                    background: "color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1))",
+                    border: "1px solid color-mix(in srgb, var(--lt-success) 40%, var(--lt-border))",
+                    background: "color-mix(in srgb, var(--lt-success) 12%, var(--lt-surface-1))",
                   }}
                 >
-                  <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                  <p className="lt:text-[11px] lt:font-semibold lt:text-success lt:uppercase">
                     Fecha seleccionada
                   </p>
                   <p className="lt:mt-1 lt:text-sm lt:font-semibold lt:text-text-1">{dateLabel}</p>
@@ -1821,7 +1881,23 @@ function AddAppointmentDialog({
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  padding: "16px 20px 0",
+                }}
+              >
+                <DialogCloseButton />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 16,
+                  padding: "4px 20px 20px",
+                }}
+              >
                 <FormFieldItem label="Título de la cita" htmlFor="appointment-title">
                   <Input
                     id="appointment-title"
@@ -1860,6 +1936,7 @@ function AddAppointmentDialog({
                     ).map((option) => {
                       const active = category === option.value
                       const Icon = option.icon
+                      const tone = APPOINTMENT_TYPE_STYLE[option.value]
 
                       return (
                         <button
@@ -1874,20 +1951,19 @@ function AddAppointmentDialog({
                             padding: "14px 12px",
                             borderRadius: 12,
                             border: active
-                              ? "2px solid var(--lt-primary)"
-                              : "1px solid var(--lt-border)",
-                            background: active
-                              ? "color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1))"
-                              : "var(--lt-surface-1)",
+                              ? `2px solid ${tone.border}`
+                              : `1px solid ${tone.border}`,
+                            background: active ? tone.bg : "var(--lt-surface-1)",
                             cursor: "pointer",
                             textAlign: "left",
+                            opacity: active ? 1 : 0.92,
                           }}
                         >
-                          <Icon
-                            size={18}
-                            color={active ? "var(--lt-primary)" : "var(--lt-text-3)"}
-                          />
-                          <span className="lt:text-sm lt:font-semibold lt:text-text-1">
+                          <Icon size={18} color={active ? tone.color : tone.idleIcon} />
+                          <span
+                            className="lt:text-sm lt:font-semibold"
+                            style={{ color: active ? tone.color : "var(--lt-text-1)" }}
+                          >
                             {option.label}
                           </span>
                           <span className="lt:text-[11px] lt:text-text-3">{option.hint}</span>
@@ -1916,12 +1992,14 @@ function AddAppointmentDialog({
                           type="button"
                           onClick={() => setTime(option)}
                           className={cn(
-                            "lt:rounded-full lt:px-3 lt:py-1.5 lt:text-xs lt:font-semibold lt:transition-colors",
+                            "lt:inline-flex lt:items-center lt:gap-1.5 lt:rounded-full lt:px-3 lt:py-1.5 lt:text-xs lt:font-semibold lt:transition-colors",
                             active
                               ? "lt:border-primary lt:bg-primary lt:text-primary-foreground"
-                              : "lt:border-border lt:bg-surface-1 lt:text-text-3 lt:hover:border-primary/30 lt:hover:text-text-1"
+                              : "lt:border-warning/35 lt:bg-warning/8 lt:text-warning lt:hover:border-warning/60"
                           )}
+                          style={{ border: "1px solid" }}
                         >
+                          {!active ? <Clock size={12} /> : null}
                           {option}
                         </button>
                       )
@@ -1955,13 +2033,14 @@ function AddAppointmentDialog({
                     gap: 10,
                     padding: "10px 12px",
                     borderRadius: 10,
-                    border: "1px solid var(--lt-border)",
-                    background: "var(--lt-surface-2)",
+                    border: "1px solid color-mix(in srgb, var(--lt-warning) 35%, var(--lt-border))",
+                    background: "color-mix(in srgb, var(--lt-warning) 8%, var(--lt-surface-1))",
                     cursor: "pointer",
                   }}
                 >
                   <Checkbox
                     id="appointment-repeat"
+                    variant="warning"
                     checked={repeatWeekly}
                     onCheckedChange={(checked) => setRepeatWeekly(checked === true)}
                   />
@@ -2002,7 +2081,7 @@ function AddAppointmentDialog({
                 ) : null}
               </div>
 
-              <DialogFooter className="lt:border-t lt:border-primary/15 lt:bg-surface-2 lt:px-6 lt:py-4">
+              <DialogFooter className={MODAL_FOOTER_CLASS}>
                 <DialogClose asChild>
                   <Button variant="outline" type="button" className="lt:min-w-[108px]">
                     Cancelar

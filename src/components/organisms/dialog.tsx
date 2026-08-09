@@ -23,6 +23,28 @@ function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.C
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+function DialogCloseButton({ className, ...props }: React.ComponentProps<typeof Button>) {
+  return (
+    <DialogPrimitive.Close asChild>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-sm"
+        className={cn(
+          "lt:shrink-0 lt:border-primary/40 lt:bg-primary/12 lt:text-primary",
+          "lt:hover:border-primary lt:hover:bg-primary/20 lt:hover:text-primary",
+          "lt:[&_svg:not([class*='size-'])]:size-4 lt:[&_svg]:stroke-[2.25]",
+          className
+        )}
+        {...props}
+      >
+        <XIcon />
+        <span className="lt:sr-only">Cerrar</span>
+      </Button>
+    </DialogPrimitive.Close>
+  )
+}
+
 function DialogOverlay({
   className,
   ...props
@@ -58,22 +80,15 @@ function DialogContent({
         )}
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            className={cn(
-              "lt:absolute lt:top-4 lt:right-4 lt:flex lt:size-9 lt:items-center lt:justify-center lt:rounded-[10px]",
-              "lt:border lt:border-border lt:bg-surface-2 lt:text-text-3 lt:shadow-none",
-              "lt:transition-[color,background-color,border-color,box-shadow] lt:duration-150",
-              "lt:hover:border-primary/35 lt:hover:bg-primary/10 lt:hover:text-primary",
-              "lt:focus-visible:border-primary lt:focus-visible:ring-[3px] lt:focus-visible:ring-primary/20 lt:focus-visible:outline-none",
-              "lt:disabled:pointer-events-none lt:[&_svg]:pointer-events-none lt:[&_svg]:shrink-0 lt:[&_svg:not([class*='size-'])]:size-4"
-            )}
-          >
-            <XIcon />
-            <span className="lt:sr-only">Cerrar</span>
-          </DialogPrimitive.Close>
+        {showCloseButton ? (
+          <>
+            <div className="lt:flex lt:justify-end">
+              <DialogCloseButton />
+            </div>
+            {children}
+          </>
+        ) : (
+          children
         )}
       </DialogPrimitive.Content>
     </DialogPortal>
@@ -143,6 +158,7 @@ function DialogDescription({
 export {
   Dialog,
   DialogClose,
+  DialogCloseButton,
   DialogContent,
   DialogDescription,
   DialogFooter,
