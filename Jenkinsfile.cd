@@ -25,10 +25,13 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: "npm-publish-token", variable: "NPM_TOKEN")]) {
           script {
-            sh "npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+            sh '''
+              npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+            '''
 
             def pkgName = sh(script: "node -p \"require('./package.json').name\"", returnStdout: true).trim()
             def pkgVersion = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
+            def publishTag = pkgVersion.contains("-") ? "dev" : "latest"
             def alreadyPublished = sh(
               script: "npm view ${pkgName}@${pkgVersion} version 2>/dev/null",
               returnStatus: true
@@ -37,8 +40,8 @@ pipeline {
             if (alreadyPublished) {
               echo "${pkgName}@${pkgVersion} ya está publicada, no hay nada que hacer."
             } else {
-              sh "pnpm publish --no-git-checks"
-              echo "Publicado ${pkgName}@${pkgVersion} en npm."
+              sh "pnpm publish --no-git-checks --tag ${publishTag}"
+              echo "Publicado ${pkgName}@${pkgVersion} en npm (tag: ${publishTag})."
             }
           }
         }
