@@ -38,7 +38,7 @@ function Group({
   swatches,
 }: {
   label: string
-  swatches: Array<{ name: string; varName: string }>
+  swatches: { name: string; varName: string }[]
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -78,6 +78,7 @@ export const Default: Story = {
           { name: "primary-hover", varName: "--lt-primary-hover" },
           { name: "primary-active", varName: "--lt-primary-active" },
           { name: "accent-tint", varName: "--lt-accent-tint" },
+          { name: "border", varName: "--lt-border" },
         ]}
       />
       <Group

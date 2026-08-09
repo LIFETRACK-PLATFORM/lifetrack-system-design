@@ -11,12 +11,12 @@ export default meta
 
 type Story = StoryObj
 
-const TYPE_SCALE: Array<{
+const TYPE_SCALE: {
   name: string
   className: string
   fontClassName: string
   spec: string
-}> = [
+}[] = [
   {
     name: "Display",
     className: "lt:text-display",
