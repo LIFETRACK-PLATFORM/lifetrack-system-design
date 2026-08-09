@@ -10,10 +10,11 @@ import {
 } from "lucide-react"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
-const Toaster = ({ theme = "system", ...props }: ToasterProps) => {
+const Toaster = ({ theme = "system", richColors = true, ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme}
+      richColors={richColors}
       className="lt:toaster lt:group"
       icons={{
         success: <CircleCheckIcon className="lt:size-4" />,
@@ -24,9 +25,21 @@ const Toaster = ({ theme = "system", ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "var(--lt-surface-2)",
+          "--normal-bg": "var(--lt-surface-1)",
           "--normal-text": "var(--lt-text-1)",
           "--normal-border": "var(--lt-border)",
+          "--success-bg": "var(--lt-surface-1)",
+          "--success-text": "var(--lt-text-1)",
+          "--success-border": "var(--lt-success)",
+          "--error-bg": "var(--lt-surface-1)",
+          "--error-text": "var(--lt-text-1)",
+          "--error-border": "var(--lt-error)",
+          "--warning-bg": "var(--lt-surface-1)",
+          "--warning-text": "var(--lt-text-1)",
+          "--warning-border": "var(--lt-warning)",
+          "--info-bg": "var(--lt-surface-1)",
+          "--info-text": "var(--lt-text-1)",
+          "--info-border": "var(--lt-primary)",
           "--border-radius": "var(--lt-radius)",
         } as React.CSSProperties
       }
