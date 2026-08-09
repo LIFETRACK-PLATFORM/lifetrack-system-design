@@ -23,11 +23,18 @@ const TONE_CLASS: Record<Tone, string> = {
   primary: "lt:bg-primary/15 lt:text-primary",
 }
 
+const INDICATOR_TONE_CLASS: Record<Tone, string> = {
+  success: "lt:bg-success",
+  warning: "lt:bg-warning",
+  primary: "lt:bg-primary",
+}
+
 const PATIENTS: {
   initials: string
   name: string
   stage: string
   progress: number
+  progressTone: Tone
   status: string
   tone: Tone
 }[] = [
@@ -36,6 +43,7 @@ const PATIENTS: {
     name: "Sofía Ramos",
     stage: "Tratamiento",
     progress: 55,
+    progressTone: "primary",
     status: "Activo",
     tone: "success",
   },
@@ -44,6 +52,7 @@ const PATIENTS: {
     name: "Julián Castro",
     stage: "Evaluación",
     progress: 15,
+    progressTone: "warning",
     status: "Pendiente",
     tone: "warning",
   },
@@ -52,6 +61,7 @@ const PATIENTS: {
     name: "Mora Peralta",
     stage: "Seguimiento",
     progress: 65,
+    progressTone: "primary",
     status: "Activo",
     tone: "success",
   },
@@ -60,6 +70,7 @@ const PATIENTS: {
     name: "Ezequiel Vidal",
     stage: "Alta",
     progress: 100,
+    progressTone: "success",
     status: "Completado",
     tone: "primary",
   },
@@ -70,7 +81,7 @@ export const Default: Story = {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>
+          <TableHead className="lt:text-text-1">
             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
               Paciente <ArrowUp size={12} strokeWidth={2} />
             </span>
@@ -93,10 +104,18 @@ export const Default: Story = {
             </TableCell>
             <TableCell>{p.stage}</TableCell>
             <TableCell>
-              <Progress value={p.progress} style={{ width: 120 }} />
+              <Progress
+                value={p.progress}
+                indicatorClassName={INDICATOR_TONE_CLASS[p.progressTone]}
+                style={{ width: 120 }}
+              />
             </TableCell>
             <TableCell>
-              <Badge className={TONE_CLASS[p.tone]} showDot>
+              <Badge
+                className={TONE_CLASS[p.tone]}
+                dotClassName={INDICATOR_TONE_CLASS[p.tone]}
+                showDot
+              >
                 {p.status}
               </Badge>
             </TableCell>

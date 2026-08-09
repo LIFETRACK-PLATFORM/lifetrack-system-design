@@ -41,6 +41,7 @@ function Badge({
   variant = "default",
   asChild = false,
   showDot = false,
+  dotClassName,
   children,
   ...props
 }: React.ComponentProps<"span"> &
@@ -48,6 +49,8 @@ function Badge({
     asChild?: boolean
     /** Nightframe: agrega un punto de color antes del texto */
     showDot?: boolean
+    /** Overrides the dot's color; defaults to the color matching `variant` */
+    dotClassName?: string
   }) {
   const Comp = asChild ? Slot.Root : "span"
   const resolved = variant ?? "default"
@@ -62,7 +65,10 @@ function Badge({
       {showDot && (
         <span
           aria-hidden
-          className={cn("lt:size-1.5 lt:shrink-0 lt:rounded-full", statusDotClass[resolved])}
+          className={cn(
+            "lt:size-1.5 lt:shrink-0 lt:rounded-full",
+            dotClassName ?? statusDotClass[resolved]
+          )}
         />
       )}
       {children}

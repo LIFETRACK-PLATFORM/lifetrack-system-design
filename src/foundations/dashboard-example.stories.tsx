@@ -49,6 +49,14 @@ const TONE_BADGE_CLASS: Record<Tone, string> = {
   neutral: "lt:bg-text-3/12 lt:text-text-3",
 }
 
+const TONE_DOT_CLASS: Record<Tone, string> = {
+  success: "lt:bg-success",
+  warning: "lt:bg-warning",
+  error: "lt:bg-error",
+  primary: "lt:bg-primary",
+  neutral: "lt:bg-text-3",
+}
+
 function Sparkline({ points, tone }: { points: string; tone: Tone }) {
   return (
     <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
@@ -79,7 +87,7 @@ function IconWrap({ Icon, tone }: { Icon: LucideIcon; tone: Tone }) {
 
 function ToneBadge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   return (
-    <Badge className={TONE_BADGE_CLASS[tone]} showDot>
+    <Badge className={TONE_BADGE_CLASS[tone]} dotClassName={TONE_DOT_CLASS[tone]} showDot>
       {children}
     </Badge>
   )
