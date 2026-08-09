@@ -21,6 +21,8 @@ import {
   User,
   Vault,
   X,
+  Scale,
+  HeartPulse,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/atoms/avatar"
@@ -35,6 +37,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules
 import { Calendar } from "@/components/molecules/calendar"
 import { FormFieldItem } from "@/components/molecules/form-field"
 import { KpiCard, type KpiTone } from "@/components/molecules/kpi-card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/molecules/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/tabs"
 import { AppSidebar } from "@/components/organisms/app-sidebar"
 import {
@@ -466,10 +469,10 @@ const TONE_COLOR: Record<KpiTone, string> = {
   neutral: "var(--lt-text-3)",
 }
 
-function getMeasurementsByType(type: MeasurementType) {
-  return MEASUREMENTS.filter((item) => item.type === type).sort((a, b) =>
-    b.dateLabel.localeCompare(a.dateLabel, "es")
-  )
+function getMeasurementsByType(type: MeasurementType, source: MeasurementRecord[]) {
+  return source
+    .filter((item) => item.type === type)
+    .sort((a, b) => b.dateLabel.localeCompare(a.dateLabel, "es"))
 }
 
 function formatMeasurementValue(type: MeasurementType, value: number) {
@@ -685,9 +688,15 @@ function MeasurementLineChart({
   )
 }
 
-function MeasurementHistoryGroup({ type }: { type: MeasurementType }) {
+function MeasurementHistoryGroup({
+  type,
+  measurements,
+}: {
+  type: MeasurementType
+  measurements: MeasurementRecord[]
+}) {
   const config = MEASUREMENT_CONFIG[type]
-  const items = getMeasurementsByType(type)
+  const items = getMeasurementsByType(type, measurements)
 
   return (
     <Card
@@ -1336,6 +1345,33 @@ const APPOINTMENT_TYPE_STYLE = {
     border: "var(--lt-success)",
     bg: "color-mix(in srgb, var(--lt-success) 12%, var(--lt-surface-1))",
     idleIcon: "color-mix(in srgb, var(--lt-success) 55%, var(--lt-text-3))",
+  },
+} as const
+
+const MEASUREMENT_TYPE_STYLE = {
+  knee_extension: {
+    color: "var(--lt-primary)",
+    border: "var(--lt-primary)",
+    bg: "color-mix(in srgb, var(--lt-primary) 12%, var(--lt-surface-1))",
+    idleIcon: "color-mix(in srgb, var(--lt-primary) 55%, var(--lt-text-3))",
+    icon: TrendingUp,
+    hint: "Grados de flexión",
+  },
+  weight: {
+    color: "var(--lt-success)",
+    border: "var(--lt-success)",
+    bg: "color-mix(in srgb, var(--lt-success) 12%, var(--lt-surface-1))",
+    idleIcon: "color-mix(in srgb, var(--lt-success) 55%, var(--lt-text-3))",
+    icon: Scale,
+    hint: "Peso corporal",
+  },
+  pain: {
+    color: "var(--lt-error)",
+    border: "var(--lt-error)",
+    bg: "color-mix(in srgb, var(--lt-error) 12%, var(--lt-surface-1))",
+    idleIcon: "color-mix(in srgb, var(--lt-error) 55%, var(--lt-text-3))",
+    icon: HeartPulse,
+    hint: "Escala 0–10",
   },
 } as const
 
@@ -2103,23 +2139,328 @@ function AddAppointmentDialog({
   )
 }
 
+function formatMeasurementDateLabel(date: Date) {
+  const day = String(date.getDate()).padStart(2, "0")
+  const month = date.toLocaleDateString("es", { month: "short" }).replace(".", "")
+  return `${day} ${month}. ${date.getFullYear()}`
+}
+
+function formatMeasurementChartLabel(date: Date) {
+  const day = String(date.getDate()).padStart(2, "0")
+  const month = date.toLocaleDateString("es", { month: "short" }).replace(".", "")
+  return `${day}-${month}`
+}
+
+function AddMeasurementDialog({ onAdd }: { onAdd: (measurement: MeasurementRecord) => void }) {
+  const [open, setOpen] = React.useState(false)
+  const [type, setType] = React.useState<MeasurementType>("knee_extension")
+  const [value, setValue] = React.useState("")
+  const [date, setDate] = React.useState<Date | undefined>(STORY_TODAY)
+
+  function resetForm() {
+    setType("knee_extension")
+    setValue("")
+    setDate(STORY_TODAY)
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (!date) return
+
+    const numericValue = Number(value)
+    const config = MEASUREMENT_CONFIG[type]
+    if (!Number.isFinite(numericValue) || numericValue < config.min || numericValue > config.max) {
+      return
+    }
+
+    onAdd({
+      id: `m-${Date.now()}`,
+      type,
+      value: numericValue,
+      dateLabel: formatMeasurementDateLabel(date),
+      chartLabel: formatMeasurementChartLabel(date),
+    })
+
+    resetForm()
+    setOpen(false)
+  }
+
+  const config = MEASUREMENT_CONFIG[type]
+  const tone = MEASUREMENT_TYPE_STYLE[type]
+  const numericValue = Number(value)
+  const valueIsValid =
+    value.trim() !== "" &&
+    Number.isFinite(numericValue) &&
+    numericValue >= config.min &&
+    numericValue <= config.max
+  const dateLabel = date
+    ? date.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" })
+    : "Seleccioná una fecha"
+  const previewValue = valueIsValid ? formatMeasurementValue(type, numericValue) : "—"
+  const TypeIcon = tone.icon
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen)
+        if (!nextOpen) resetForm()
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <Plus />
+          Registrar medición
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        showCloseButton={false}
+        className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[520px]"
+      >
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 16,
+              padding: "20px 24px 0",
+            }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <Badge variant="default" className="lt:gap-1.5">
+                  <TrendingUp size={12} />
+                  Medición
+                </Badge>
+                <Badge variant="secondary">Seguimiento</Badge>
+              </div>
+              <DialogTitle className="lt:font-heading lt:text-body-lg">
+                Registrar medición
+              </DialogTitle>
+              <DialogDescription className="lt:mt-1 lt:text-label-md lt:text-text-3">
+                Elegí el tipo, cargá el valor y la fecha del registro.
+              </DialogDescription>
+            </div>
+            <DialogCloseButton />
+          </div>
+
+          <div style={{ padding: "16px 24px 0" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                gap: 10,
+              }}
+            >
+              {(Object.keys(MEASUREMENT_TYPE_STYLE) as MeasurementType[]).map((option) => {
+                const active = type === option
+                const optionConfig = MEASUREMENT_CONFIG[option]
+                const optionTone = MEASUREMENT_TYPE_STYLE[option]
+                const Icon = optionTone.icon
+
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setType(option)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      gap: 6,
+                      padding: "12px 10px",
+                      borderRadius: 12,
+                      border: active
+                        ? `2px solid ${optionTone.border}`
+                        : `1px solid ${optionTone.border}`,
+                      background: active ? optionTone.bg : "var(--lt-surface-1)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      opacity: active ? 1 : 0.92,
+                    }}
+                  >
+                    <Icon size={16} color={active ? optionTone.color : optionTone.idleIcon} />
+                    <span
+                      className="lt:text-xs lt:font-semibold lt:leading-tight"
+                      style={{ color: active ? optionTone.color : "var(--lt-text-1)" }}
+                    >
+                      {optionConfig.label}
+                    </span>
+                    <span className="lt:text-[10px] lt:text-text-3">{optionTone.hint}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div
+              style={{
+                marginTop: 12,
+                padding: "16px",
+                borderRadius: 14,
+                border: `1px solid color-mix(in srgb, ${tone.border} 35%, var(--lt-border))`,
+                background: `linear-gradient(135deg, color-mix(in srgb, ${tone.border} 10%, var(--lt-surface-1)), var(--lt-surface-2))`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 12,
+              }}
+            >
+              <div>
+                <p
+                  className="lt:text-[11px] lt:font-semibold lt:uppercase"
+                  style={{ color: tone.color }}
+                >
+                  Valor a registrar
+                </p>
+                <p
+                  className="lt:mt-1 lt:font-metric lt:text-metric-md"
+                  style={{ color: tone.color }}
+                >
+                  {previewValue}
+                </p>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">Fecha</p>
+                <p className="lt:mt-1 lt:text-sm lt:font-semibold lt:text-text-1">
+                  {date ? formatMeasurementDateLabel(date) : "—"}
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 12,
+                marginTop: 16,
+              }}
+            >
+              <FormFieldItem
+                label={`Valor (${config.unit})`}
+                htmlFor="measurement-value"
+                hint={`Rango ${config.min}–${config.max}`}
+              >
+                <Input
+                  id="measurement-value"
+                  type="number"
+                  min={config.min}
+                  max={config.max}
+                  step={config.step}
+                  placeholder={type === "pain" ? "Ej. 3" : type === "weight" ? "Ej. 76" : "Ej. 85"}
+                  value={value}
+                  onChange={(event) => setValue(event.target.value)}
+                  autoFocus
+                />
+              </FormFieldItem>
+
+              <FormFieldItem label="Fecha" htmlFor="measurement-date">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="measurement-date"
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "lt:w-full lt:justify-start lt:font-normal",
+                        !date && "lt:text-text-3"
+                      )}
+                    >
+                      <CalendarDays />
+                      {dateLabel}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="lt:w-auto lt:p-0" align="start">
+                    <Calendar mode="single" selected={date} onSelect={setDate} />
+                  </PopoverContent>
+                </Popover>
+              </FormFieldItem>
+            </div>
+
+            {valueIsValid && date ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  marginTop: 16,
+                  padding: 12,
+                  borderRadius: 12,
+                  border: `1px dashed color-mix(in srgb, ${tone.border} 40%, var(--lt-border))`,
+                  background: `color-mix(in srgb, ${tone.border} 6%, var(--lt-surface-1))`,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background: tone.bg,
+                    border: `1px solid color-mix(in srgb, ${tone.border} 35%, var(--lt-border))`,
+                    color: tone.color,
+                    flexShrink: 0,
+                  }}
+                >
+                  <TypeIcon size={20} />
+                </div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <p className="lt:text-label-md lt:font-semibold lt:text-text-3">Vista previa</p>
+                  <p className="lt:text-body-md lt:font-semibold lt:text-text-1">
+                    {config.label} · {previewValue}
+                  </p>
+                  <p className="lt:text-label-md lt:text-text-3">
+                    {formatMeasurementDateLabel(date)}
+                  </p>
+                </div>
+                <Badge
+                  variant={
+                    type === "pain" ? "destructive" : type === "weight" ? "success" : "default"
+                  }
+                  className="lt:shrink-0"
+                >
+                  Nuevo
+                </Badge>
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className={MODAL_FOOTER_CLASS}>
+            <DialogClose asChild>
+              <Button variant="outline" type="button" className="lt:min-w-[108px]">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button type="submit" className="lt:min-w-[120px]" disabled={!valueIsValid || !date}>
+              Registrar
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 function RehabPlanDemo() {
   const [selectedDay, setSelectedDay] = React.useState(9)
   const [exercises, setExercises] = React.useState(EXERCISES)
   const [appointments, setAppointments] = React.useState(APPOINTMENTS)
+  const [measurements, setMeasurements] = React.useState(MEASUREMENTS)
   const [painLevel, setPainLevel] = React.useState("3")
   const [chartMetric, setChartMetric] = React.useState<MeasurementType>("knee_extension")
 
-  const kneeExtensionValues = getMeasurementsByType("knee_extension")
+  const kneeExtensionValues = getMeasurementsByType("knee_extension", measurements)
     .map((item) => item.value)
     .reverse()
-  const lastPainRecord = getMeasurementsByType("pain")[0]
-  const chartPoints = getMeasurementsByType(chartMetric).slice().reverse()
+  const lastPainRecord = getMeasurementsByType("pain", measurements)[0]
+  const chartPoints = getMeasurementsByType(chartMetric, measurements).slice().reverse()
   const chartConfig = MEASUREMENT_CONFIG[chartMetric]
   const chartLatest = chartPoints[chartPoints.length - 1]?.value ?? 0
   const chartFirst = chartPoints[0]?.value ?? 0
   const chartDelta = chartLatest - chartFirst
-  const painSparkline = getMeasurementsByType("pain")
+  const painSparkline = getMeasurementsByType("pain", measurements)
     .slice()
     .reverse()
     .map((item, index, list) => {
@@ -2178,6 +2519,10 @@ function RehabPlanDemo() {
 
   function addAppointment(appointment: (typeof APPOINTMENTS)[number]) {
     setAppointments((current) => [...current, appointment])
+  }
+
+  function addMeasurement(measurement: MeasurementRecord) {
+    setMeasurements((current) => [measurement, ...current])
   }
 
   function setAppointmentAttendance(id: string, attendance: AppointmentAttendance) {
@@ -2459,10 +2804,7 @@ function RehabPlanDemo() {
                       Seguimiento separado por tipo · extensión, peso y dolor
                     </p>
                   </div>
-                  <Button variant="outline">
-                    <Plus />
-                    Registrar medición
-                  </Button>
+                  <AddMeasurementDialog onAdd={addMeasurement} />
                 </div>
 
                 <div
@@ -2491,8 +2833,11 @@ function RehabPlanDemo() {
                   <KpiCard
                     label="Peso actual"
                     value={
-                      getMeasurementsByType("weight")[0]
-                        ? formatMeasurementValue("weight", getMeasurementsByType("weight")[0].value)
+                      getMeasurementsByType("weight", measurements)[0]
+                        ? formatMeasurementValue(
+                            "weight",
+                            getMeasurementsByType("weight", measurements)[0].value
+                          )
                         : "—"
                     }
                     tone="success"
@@ -2636,9 +2981,9 @@ function RehabPlanDemo() {
                     marginBottom: 24,
                   }}
                 >
-                  <MeasurementHistoryGroup type="knee_extension" />
-                  <MeasurementHistoryGroup type="weight" />
-                  <MeasurementHistoryGroup type="pain" />
+                  <MeasurementHistoryGroup type="knee_extension" measurements={measurements} />
+                  <MeasurementHistoryGroup type="weight" measurements={measurements} />
+                  <MeasurementHistoryGroup type="pain" measurements={measurements} />
                 </div>
 
                 <Card
