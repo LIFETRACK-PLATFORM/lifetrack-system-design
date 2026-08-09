@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { Badge } from "./badge"
+import { Badge, StatusBadge, type StatusBadgeStatus } from "./badge"
 
 const meta: Meta<typeof Badge> = {
   title: "Atoms/Badge",
@@ -59,6 +59,50 @@ export const Variants: Story = {
       <Badge {...args} variant="link">
         Link
       </Badge>
+    </div>
+  ),
+}
+
+export const WithDot: Story = {
+  name: "With dot (showDot)",
+  render: () => (
+    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <Badge variant="default" showDot>
+        Default
+      </Badge>
+      <Badge variant="secondary" showDot>
+        Secondary
+      </Badge>
+      <Badge variant="success" showDot>
+        Success
+      </Badge>
+      <Badge variant="warning" showDot>
+        Warning
+      </Badge>
+      <Badge variant="destructive" showDot>
+        Destructive
+      </Badge>
+    </div>
+  ),
+}
+
+const STATUSES: StatusBadgeStatus[] = [
+  "active",
+  "pending",
+  "overdue",
+  "completed",
+  "paused",
+  "therapy",
+  "medical",
+]
+
+export const StatusBadges: Story = {
+  name: "StatusBadge (dot + label per status)",
+  render: () => (
+    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      {STATUSES.map((status) => (
+        <StatusBadge key={status} status={status} />
+      ))}
     </div>
   ),
 }
