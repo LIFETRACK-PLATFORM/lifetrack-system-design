@@ -70,6 +70,7 @@
     "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
+    "@rollup/rollup-win32-x64-msvc": "4.62.4",
     "@storybook/addon-essentials": "^8.6.18",
     "@storybook/addon-interactions": "^8.6.18",
     "@storybook/react": "8.6.18",

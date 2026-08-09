@@ -48,6 +48,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^20.5.3
         version: 20.5.3
+      '@rollup/rollup-win32-x64-msvc':
+        specifier: 4.62.4
+        version: 4.62.4
       '@storybook/addon-essentials':
         specifier: ^8.6.18
         version: 8.6.18(@types/react@19.2.18)(storybook@8.6.18(prettier@3.9.6))
@@ -5798,8 +5801,7 @@ snapshots:
   '@rollup/rollup-win32-x64-gnu@4.62.4':
     optional: true
 
-  '@rollup/rollup-win32-x64-msvc@4.62.4':
-    optional: true
+  '@rollup/rollup-win32-x64-msvc@4.62.4': {}
 
   '@simple-libs/child-process-utils@1.0.2':
     dependencies:
