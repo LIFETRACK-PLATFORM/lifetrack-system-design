@@ -9,11 +9,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "lt:bg-transparent lt:text-text-1",
-        secondary: "lt:bg-transparent lt:text-text-3",
-        success: "lt:bg-transparent lt:text-success",
-        warning: "lt:bg-transparent lt:text-warning",
-        destructive: "lt:bg-transparent lt:text-error",
+        default: "lt:bg-text-1/10 lt:text-text-1",
+        secondary: "lt:bg-text-3/12 lt:text-text-3",
+        success: "lt:bg-success/15 lt:text-success",
+        warning: "lt:bg-warning/15 lt:text-warning",
+        destructive: "lt:bg-error/15 lt:text-error",
         outline: "lt:border-border lt:text-text-1",
         ghost: "lt:text-text-3",
         link: "lt:text-primary lt:underline-offset-4 lt:[a&]:hover:underline",
@@ -46,7 +46,7 @@ function Badge({
 }: React.ComponentProps<"span"> &
   VariantProps<typeof badgeVariants> & {
     asChild?: boolean
-    /** Nightframe: texto + punto de color, sin fondo saturado */
+    /** Nightframe: agrega un punto de color antes del texto */
     showDot?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "span"
