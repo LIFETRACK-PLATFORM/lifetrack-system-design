@@ -32,10 +32,20 @@ import { Progress } from "@/components/atoms/progress"
 import { SearchInput } from "@/components/atoms/search-input"
 import { Textarea } from "@/components/atoms/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/card"
+import { Calendar } from "@/components/molecules/calendar"
 import { FormFieldItem } from "@/components/molecules/form-field"
 import { KpiCard, type KpiTone } from "@/components/molecules/kpi-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/tabs"
 import { AppSidebar } from "@/components/organisms/app-sidebar"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/organisms/dialog"
 import {
   Select,
   SelectContent,
@@ -43,6 +53,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/organisms/select"
+import { cn } from "@/lib/utils"
 
 const meta: Meta = {
   title: "Examples/Rehab plan",
@@ -1285,6 +1296,734 @@ function AppointmentCard({
   )
 }
 
+type MeasureMode = "reps" | "duration"
+
+const WEEKDAY_OPTIONS = [
+  { key: "sun", label: "D" },
+  { key: "mon", label: "L" },
+  { key: "tue", label: "M" },
+  { key: "wed", label: "M" },
+  { key: "thu", label: "J" },
+  { key: "fri", label: "V" },
+  { key: "sat", label: "S" },
+] as const
+
+const EXERCISE_ACCENTS: AccentKey[] = ["primary", "success", "warning", "accent"]
+
+function AddExerciseDialog({ onAdd }: { onAdd: (exercise: (typeof EXERCISES)[number]) => void }) {
+  const [open, setOpen] = React.useState(false)
+  const [name, setName] = React.useState("")
+  const [measureMode, setMeasureMode] = React.useState<MeasureMode>("reps")
+  const [sets, setSets] = React.useState("3")
+  const [reps, setReps] = React.useState("20")
+  const [duration, setDuration] = React.useState("1")
+  const [notes, setNotes] = React.useState("")
+  const [days, setDays] = React.useState<string[]>([])
+
+  function resetForm() {
+    setName("")
+    setMeasureMode("reps")
+    setSets("3")
+    setReps("20")
+    setDuration("1")
+    setNotes("")
+    setDays([])
+  }
+
+  function toggleDay(key: string) {
+    setDays((current) =>
+      current.includes(key) ? current.filter((day) => day !== key) : [...current, key]
+    )
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const title = name.trim()
+    if (!title) return
+
+    const setsValue = Math.max(1, Number(sets) || 1)
+    const repsValue = Math.max(1, Number(reps) || 1)
+    const durationValue = Math.max(1, Number(duration) || 1)
+    const meta =
+      measureMode === "reps"
+        ? `${setsValue} series · ${repsValue} reps`
+        : `${setsValue} series · ${durationValue} min`
+    const total = measureMode === "reps" ? setsValue * repsValue : setsValue
+
+    onAdd({
+      id: `ex-${Date.now()}`,
+      title,
+      meta,
+      done: 0,
+      total,
+      overdue: false,
+      accent: EXERCISE_ACCENTS[Math.floor(Math.random() * EXERCISE_ACCENTS.length)],
+    })
+
+    resetForm()
+    setOpen(false)
+  }
+
+  const setsValue = Math.max(1, Number(sets) || 1)
+  const repsValue = Math.max(1, Number(reps) || 1)
+  const durationValue = Math.max(1, Number(duration) || 1)
+  const previewTotal = measureMode === "reps" ? setsValue * repsValue : setsValue
+  const previewMeta =
+    measureMode === "reps"
+      ? `${setsValue} series · ${repsValue} reps`
+      : `${setsValue} series · ${durationValue} min`
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen)
+        if (!nextOpen) resetForm()
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="default">
+          <Plus />
+          Agregar ejercicio
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[540px]">
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 16,
+              padding: "20px 48px 0 24px",
+            }}
+          >
+            <div>
+              <p className="lt:font-mono lt:text-[11px] lt:font-semibold lt:tracking-[0.08em] lt:text-primary lt:uppercase">
+                Protocolo · ejercicio
+              </p>
+              <DialogTitle className="lt:mt-1 lt:font-heading lt:text-body-lg">
+                Configurar volumen
+              </DialogTitle>
+              <DialogDescription className="lt:mt-1 lt:text-label-md lt:text-text-3">
+                Definí series, repeticiones y frecuencia semanal.
+              </DialogDescription>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: 44,
+                height: 44,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 12,
+                background: "color-mix(in srgb, var(--lt-primary) 14%, var(--lt-surface-2))",
+                color: "var(--lt-primary)",
+                flexShrink: 0,
+              }}
+            >
+              <Activity size={22} strokeWidth={2} />
+            </div>
+          </div>
+
+          <div style={{ padding: "16px 24px 0" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto 1fr auto 1fr",
+                alignItems: "center",
+                gap: 10,
+                padding: "18px 16px",
+                borderRadius: 14,
+                border: "1px solid color-mix(in srgb, var(--lt-primary) 30%, var(--lt-border))",
+                background:
+                  "linear-gradient(135deg, color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1)), var(--lt-surface-2))",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                  Series
+                </p>
+                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
+                  {setsValue}
+                </p>
+              </div>
+              <span className="lt:font-metric lt:text-xl lt:text-text-3">×</span>
+              <div style={{ textAlign: "center" }}>
+                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                  {measureMode === "reps" ? "Reps" : "Min"}
+                </p>
+                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
+                  {measureMode === "reps" ? repsValue : durationValue}
+                </p>
+              </div>
+              <span className="lt:font-metric lt:text-xl lt:text-text-3">=</span>
+              <div style={{ textAlign: "center" }}>
+                <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">Total</p>
+                <p className="lt:mt-1 lt:font-metric lt:text-metric-md lt:text-primary">
+                  {previewTotal}
+                  <span className="lt:ml-0.5 lt:text-label-md lt:text-text-3">
+                    {measureMode === "reps" ? "reps" : "min"}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12 }}
+            >
+              {(
+                [
+                  {
+                    value: "reps" as const,
+                    label: "Repeticiones",
+                    hint: "Contar series × reps",
+                    icon: TrendingUp,
+                  },
+                  {
+                    value: "duration" as const,
+                    label: "Duración",
+                    hint: "Medir en minutos",
+                    icon: Clock,
+                  },
+                ] as const
+              ).map((option) => {
+                const active = measureMode === option.value
+                const Icon = option.icon
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setMeasureMode(option.value)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      gap: 6,
+                      padding: "12px 14px",
+                      borderRadius: 12,
+                      border: active ? "2px solid var(--lt-primary)" : "1px solid var(--lt-border)",
+                      background: active
+                        ? "color-mix(in srgb, var(--lt-primary) 8%, var(--lt-surface-1))"
+                        : "var(--lt-surface-1)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                    }}
+                  >
+                    <Icon size={16} color={active ? "var(--lt-primary)" : "var(--lt-text-3)"} />
+                    <span
+                      className="lt:text-sm lt:font-semibold"
+                      style={{ color: active ? "var(--lt-primary)" : "var(--lt-text-1)" }}
+                    >
+                      {option.label}
+                    </span>
+                    <span className="lt:text-[11px] lt:text-text-3">{option.hint}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "18px 24px" }}>
+            <FormFieldItem label="Nombre del ejercicio" htmlFor="exercise-name">
+              <Input
+                id="exercise-name"
+                placeholder="Ej. Elevaciones de talón"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                autoFocus
+              />
+            </FormFieldItem>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <FormFieldItem label="Series" htmlFor="exercise-sets">
+                <Input
+                  id="exercise-sets"
+                  type="number"
+                  min={1}
+                  value={sets}
+                  onChange={(event) => setSets(event.target.value)}
+                />
+              </FormFieldItem>
+              {measureMode === "reps" ? (
+                <FormFieldItem label="Repeticiones" htmlFor="exercise-reps">
+                  <Input
+                    id="exercise-reps"
+                    type="number"
+                    min={1}
+                    value={reps}
+                    onChange={(event) => setReps(event.target.value)}
+                  />
+                </FormFieldItem>
+              ) : (
+                <FormFieldItem label="Minutos" htmlFor="exercise-duration">
+                  <Input
+                    id="exercise-duration"
+                    type="number"
+                    min={1}
+                    value={duration}
+                    onChange={(event) => setDuration(event.target.value)}
+                  />
+                </FormFieldItem>
+              )}
+            </div>
+
+            <div>
+              <span className="lt:text-xs lt:font-semibold lt:text-text-3">Frecuencia semanal</span>
+              <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                {WEEKDAY_OPTIONS.map((day) => {
+                  const selected = days.includes(day.key)
+
+                  return (
+                    <button
+                      key={day.key}
+                      type="button"
+                      aria-pressed={selected}
+                      aria-label={`Día ${day.label}`}
+                      onClick={() => toggleDay(day.key)}
+                      className={cn(
+                        "lt:flex lt:size-8 lt:items-center lt:justify-center lt:rounded-full lt:text-[11px] lt:font-bold lt:transition-colors",
+                        selected
+                          ? "lt:bg-primary lt:text-white"
+                          : "lt:border lt:border-border lt:bg-surface-1 lt:text-text-3"
+                      )}
+                    >
+                      {day.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <FormFieldItem label="Indicaciones" htmlFor="exercise-notes" hint="Opcional">
+              <Input
+                id="exercise-notes"
+                placeholder="Ej. Banda mediana, espalda recta"
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+              />
+            </FormFieldItem>
+
+            {name.trim() ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: 12,
+                  borderRadius: 12,
+                  border: "1px dashed color-mix(in srgb, var(--lt-primary) 35%, var(--lt-border))",
+                  background: "color-mix(in srgb, var(--lt-primary) 4%, var(--lt-surface-1))",
+                }}
+              >
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "color-mix(in srgb, var(--lt-primary) 12%, var(--lt-surface-2))",
+                    color: "var(--lt-primary)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Activity size={20} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p className="lt:text-label-md lt:font-semibold lt:text-text-3">Vista previa</p>
+                  <p className="lt:truncate lt:text-body-md lt:font-semibold lt:text-text-1">
+                    {name.trim()}
+                  </p>
+                  <p className="lt:text-label-md lt:text-text-3">{previewMeta}</p>
+                </div>
+                <Badge variant="secondary" showDot className="lt:ml-auto lt:shrink-0">
+                  Pendiente
+                </Badge>
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className="lt:border-t lt:border-primary/15 lt:bg-surface-2 lt:px-6 lt:py-4">
+            <DialogClose asChild>
+              <Button variant="outline" type="button" className="lt:min-w-[108px]">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button type="submit" className="lt:min-w-[156px]" disabled={!name.trim()}>
+              Agregar al protocolo
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+type AppointmentFormCategory = "terapia" | "control"
+
+const APPOINTMENT_TIME_OPTIONS = [
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:30",
+  "14:00",
+  "16:00",
+  "18:00",
+] as const
+
+const APPOINTMENT_ACCENTS: AccentKey[] = ["accent", "primary", "success", "warning"]
+
+const STORY_TODAY = new Date(2026, 7, 9)
+
+function formatAppointmentDateLabel(date: Date) {
+  const month = date.toLocaleDateString("es", { month: "short" }).replace(".", "")
+  return `${month} ${date.getDate()}`
+}
+
+function formatAppointmentTimeLabel(time: string) {
+  const [hours, minutes] = time.split(":").map(Number)
+  const period = hours >= 12 ? "p.m." : "a.m."
+  const hour12 = hours % 12 || 12
+  return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`
+}
+
+function getAppointmentTiming(date: Date): AppointmentTiming {
+  const dayStart = (value: Date) =>
+    new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime()
+  const target = dayStart(date)
+  const today = dayStart(STORY_TODAY)
+
+  if (target === today) return "today"
+  if (target > today) return "upcoming"
+  return "past"
+}
+
+function AddAppointmentDialog({
+  onAdd,
+}: {
+  onAdd: (appointment: (typeof APPOINTMENTS)[number]) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+  const [title, setTitle] = React.useState("")
+  const [category, setCategory] = React.useState<AppointmentFormCategory>("terapia")
+  const [date, setDate] = React.useState<Date | undefined>(undefined)
+  const [time, setTime] = React.useState<string>("09:00")
+  const [place, setPlace] = React.useState("")
+  const [notes, setNotes] = React.useState("")
+  const [repeatWeekly, setRepeatWeekly] = React.useState(false)
+
+  function resetForm() {
+    setTitle("")
+    setCategory("terapia")
+    setDate(undefined)
+    setTime("09:00")
+    setPlace("")
+    setNotes("")
+    setRepeatWeekly(false)
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const trimmedTitle = title.trim()
+    const trimmedPlace = place.trim()
+    if (!trimmedTitle || !date || !trimmedPlace) return
+
+    onAdd({
+      id: `ap-${Date.now()}`,
+      title: trimmedTitle,
+      category,
+      provider: trimmedPlace,
+      location: trimmedPlace,
+      dateLabel: formatAppointmentDateLabel(date),
+      timeLabel: formatAppointmentTimeLabel(time),
+      timing: getAppointmentTiming(date),
+      attendance: null,
+      accent: APPOINTMENT_ACCENTS[Math.floor(Math.random() * APPOINTMENT_ACCENTS.length)],
+    })
+
+    resetForm()
+    setOpen(false)
+  }
+
+  const dateLabel = date
+    ? date.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" })
+    : "Seleccioná una fecha"
+  const previewDateLabel = date ? formatAppointmentDateLabel(date) : "—"
+  const previewTimeLabel = formatAppointmentTimeLabel(time)
+  const categoryLabel = category === "terapia" ? "TERAPIA" : "CONTROL"
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen)
+        if (!nextOpen) resetForm()
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="default">
+          <CalendarDays />
+          Agendar cita
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="lt:gap-0 lt:overflow-hidden lt:p-0 lt:sm:max-w-[760px]">
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(280px, 320px) 1fr",
+            }}
+          >
+            <div
+              style={{
+                padding: 20,
+                borderRight: "1px solid var(--lt-border)",
+                background:
+                  "linear-gradient(180deg, color-mix(in srgb, var(--lt-primary) 8%, var(--lt-surface-2)), var(--lt-surface-2))",
+              }}
+            >
+              <p className="lt:font-mono lt:text-[11px] lt:font-semibold lt:tracking-[0.08em] lt:text-primary lt:uppercase">
+                Agenda
+              </p>
+              <DialogTitle className="lt:mt-1 lt:font-heading lt:text-body-lg">
+                Elegí el día
+              </DialogTitle>
+              <DialogDescription className="lt:mt-1 lt:mb-3 lt:text-label-md lt:text-text-3">
+                El calendario queda fijo mientras completás los datos.
+              </DialogDescription>
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="lt:w-full lt:rounded-[12px] lt:border lt:border-border lt:bg-surface-1"
+              />
+              {date ? (
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "1px solid color-mix(in srgb, var(--lt-primary) 35%, var(--lt-border))",
+                    background: "color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1))",
+                  }}
+                >
+                  <p className="lt:text-[11px] lt:font-semibold lt:text-text-3 lt:uppercase">
+                    Fecha seleccionada
+                  </p>
+                  <p className="lt:mt-1 lt:text-sm lt:font-semibold lt:text-text-1">{dateLabel}</p>
+                </div>
+              ) : null}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20 }}>
+                <FormFieldItem label="Título de la cita" htmlFor="appointment-title">
+                  <Input
+                    id="appointment-title"
+                    placeholder="Ej. Control post-operatorio"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    autoFocus
+                  />
+                </FormFieldItem>
+
+                <div>
+                  <span className="lt:text-xs lt:font-semibold lt:text-text-3">Tipo de cita</span>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: 10,
+                      marginTop: 8,
+                    }}
+                  >
+                    {(
+                      [
+                        {
+                          value: "terapia" as const,
+                          label: "Terapia",
+                          hint: "Sesión con fisioterapeuta",
+                          icon: Activity,
+                        },
+                        {
+                          value: "control" as const,
+                          label: "Médica",
+                          hint: "Control o evaluación",
+                          icon: Stethoscope,
+                        },
+                      ] as const
+                    ).map((option) => {
+                      const active = category === option.value
+                      const Icon = option.icon
+
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setCategory(option.value)}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                            gap: 8,
+                            padding: "14px 12px",
+                            borderRadius: 12,
+                            border: active
+                              ? "2px solid var(--lt-primary)"
+                              : "1px solid var(--lt-border)",
+                            background: active
+                              ? "color-mix(in srgb, var(--lt-primary) 10%, var(--lt-surface-1))"
+                              : "var(--lt-surface-1)",
+                            cursor: "pointer",
+                            textAlign: "left",
+                          }}
+                        >
+                          <Icon
+                            size={18}
+                            color={active ? "var(--lt-primary)" : "var(--lt-text-3)"}
+                          />
+                          <span className="lt:text-sm lt:font-semibold lt:text-text-1">
+                            {option.label}
+                          </span>
+                          <span className="lt:text-[11px] lt:text-text-3">{option.hint}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="lt:text-xs lt:font-semibold lt:text-text-3">Hora</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 8,
+                      marginTop: 8,
+                    }}
+                  >
+                    {APPOINTMENT_TIME_OPTIONS.map((option) => {
+                      const active = time === option
+
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => setTime(option)}
+                          className={cn(
+                            "lt:rounded-full lt:px-3 lt:py-1.5 lt:text-xs lt:font-semibold lt:transition-colors",
+                            active
+                              ? "lt:border-primary lt:bg-primary lt:text-primary-foreground"
+                              : "lt:border-border lt:bg-surface-1 lt:text-text-3 lt:hover:border-primary/30 lt:hover:text-text-1"
+                          )}
+                        >
+                          {option}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <FormFieldItem label="Profesional / centro" htmlFor="appointment-place">
+                  <Input
+                    id="appointment-place"
+                    placeholder="Ej. Centro Médico Apex"
+                    value={place}
+                    onChange={(event) => setPlace(event.target.value)}
+                  />
+                </FormFieldItem>
+
+                <FormFieldItem label="Notas" htmlFor="appointment-notes" hint="Opcional">
+                  <Input
+                    id="appointment-notes"
+                    placeholder="Ej. Llevar resonancia"
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                  />
+                </FormFieldItem>
+
+                <label
+                  htmlFor="appointment-repeat"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "1px solid var(--lt-border)",
+                    background: "var(--lt-surface-2)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Checkbox
+                    id="appointment-repeat"
+                    checked={repeatWeekly}
+                    onCheckedChange={(checked) => setRepeatWeekly(checked === true)}
+                  />
+                  <span className="lt:text-label-md lt:text-text-2">Repetir cada semana</span>
+                </label>
+
+                {title.trim() && date && place.trim() ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: 12,
+                      borderRadius: 12,
+                      border:
+                        "1px dashed color-mix(in srgb, var(--lt-primary) 35%, var(--lt-border))",
+                      background: "color-mix(in srgb, var(--lt-primary) 5%, var(--lt-surface-1))",
+                    }}
+                  >
+                    <AppointmentDateThumb
+                      dateLabel={previewDateLabel}
+                      timeLabel={previewTimeLabel}
+                      accent="primary"
+                    />
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p className="lt:text-label-md lt:font-semibold lt:text-text-3">
+                        Vista previa
+                      </p>
+                      <p className="lt:truncate lt:text-body-md lt:font-semibold lt:text-text-1">
+                        {title.trim()}
+                      </p>
+                      <p className="lt:truncate lt:text-label-md lt:text-text-3">{place.trim()}</p>
+                    </div>
+                    <Badge variant="default" className="lt:shrink-0 lt:uppercase">
+                      {categoryLabel}
+                    </Badge>
+                  </div>
+                ) : null}
+              </div>
+
+              <DialogFooter className="lt:border-t lt:border-primary/15 lt:bg-surface-2 lt:px-6 lt:py-4">
+                <DialogClose asChild>
+                  <Button variant="outline" type="button" className="lt:min-w-[108px]">
+                    Cancelar
+                  </Button>
+                </DialogClose>
+                <Button
+                  type="submit"
+                  className="lt:min-w-[140px]"
+                  disabled={!title.trim() || !date || !place.trim()}
+                >
+                  Confirmar cita
+                </Button>
+              </DialogFooter>
+            </div>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 function RehabPlanDemo() {
   const [selectedDay, setSelectedDay] = React.useState(9)
   const [exercises, setExercises] = React.useState(EXERCISES)
@@ -1352,6 +2091,14 @@ function RehabPlanDemo() {
     setExercises((current) =>
       current.map((ex) => (ex.id === id ? { ...ex, done: ex.done >= ex.total ? 0 : ex.total } : ex))
     )
+  }
+
+  function addExercise(exercise: (typeof EXERCISES)[number]) {
+    setExercises((current) => [...current, exercise])
+  }
+
+  function addAppointment(appointment: (typeof APPOINTMENTS)[number]) {
+    setAppointments((current) => [...current, appointment])
   }
 
   function setAppointmentAttendance(id: string, attendance: AppointmentAttendance) {
@@ -1467,10 +2214,7 @@ function RehabPlanDemo() {
                       </Badge>
                     </div>
                     <Button variant="ghost">Guardar</Button>
-                    <Button variant="outline">
-                      <Plus />
-                      Agregar ejercicio
-                    </Button>
+                    <AddExerciseDialog onAdd={addExercise} />
                   </div>
                 </div>
 
@@ -1600,10 +2344,7 @@ function RehabPlanDemo() {
                         No asistió
                       </Badge>
                     </div>
-                    <Button variant="outline">
-                      <Plus />
-                      Agregar cita
-                    </Button>
+                    <AddAppointmentDialog onAdd={addAppointment} />
                   </div>
                 </div>
 

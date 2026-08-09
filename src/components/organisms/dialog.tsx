@@ -62,10 +62,17 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="lt:absolute lt:top-4 lt:right-4 lt:rounded-xs lt:opacity-70 lt:ring-offset-background lt:transition-opacity lt:hover:opacity-100 lt:focus:ring-2 lt:focus:ring-ring lt:focus:ring-offset-2 lt:focus:outline-hidden lt:disabled:pointer-events-none lt:data-[state=open]:bg-accent lt:data-[state=open]:text-muted-foreground lt:[&_svg]:pointer-events-none lt:[&_svg]:shrink-0 lt:[&_svg:not([class*='size-'])]:size-4"
+            className={cn(
+              "lt:absolute lt:top-4 lt:right-4 lt:flex lt:size-9 lt:items-center lt:justify-center lt:rounded-[10px]",
+              "lt:border lt:border-border lt:bg-surface-2 lt:text-text-3 lt:shadow-none",
+              "lt:transition-[color,background-color,border-color,box-shadow] lt:duration-150",
+              "lt:hover:border-primary/35 lt:hover:bg-primary/10 lt:hover:text-primary",
+              "lt:focus-visible:border-primary lt:focus-visible:ring-[3px] lt:focus-visible:ring-primary/20 lt:focus-visible:outline-none",
+              "lt:disabled:pointer-events-none lt:[&_svg]:pointer-events-none lt:[&_svg]:shrink-0 lt:[&_svg:not([class*='size-'])]:size-4"
+            )}
           >
             <XIcon />
-            <span className="lt:sr-only">Close</span>
+            <span className="lt:sr-only">Cerrar</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -95,7 +102,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "lt:flex lt:flex-col-reverse lt:gap-2 lt:sm:flex-row lt:sm:justify-end",
+        "lt:flex lt:flex-col-reverse lt:gap-3 lt:sm:flex-row lt:sm:items-center lt:sm:justify-end",
         className
       )}
       {...props}
