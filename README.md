@@ -117,9 +117,24 @@ CI OK → Publish npm (si versión nueva) → Deploy Storybook (Netlify)
 
 Así queda igual que `auth-service` + `auth-service-cd`: primero valida, y solo si pasa publica y despliega.
 
-### npm token
+### npm token (importante para CI)
 
-En [npmjs.com](https://www.npmjs.com/) → Access Tokens → **Automation** (CI) con publish en el scope `@lifetrack`.
+El error `EOTP — This operation requires a one-time password` significa que el token en Jenkins **no es válido para CI**. No sirven tokens "Publish" ni tokens de login con 2FA.
+
+Crear uno nuevo en [npmjs.com → Access Tokens](https://www.npmjs.com/settings/~tokens):
+
+| Tipo                                    | Uso en Jenkins                                                                                           |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Granular Access Token** (recomendado) | Permissions: **Read and write**. Packages: scope `@lifetrack` (o all). Copiar el token **una sola vez**. |
+| **Classic → Automation**                | Solo para CI; **no pide OTP**. Reemplaza `npm-publish-token` en Jenkins.                                 |
+
+Pasos en Jenkins:
+
+1. **Manage Jenkins → Credentials** → editar `npm-publish-token`
+2. Pegar el token nuevo (tipo Automation o Granular con write)
+3. Re-lanzar `system-design-cd`
+
+El mismo credential `npm-publish-token` lo usa `lifetrack-contracts` — si contracts publica bien, compará que el token tenga permiso de **publish** en `@lifetrack/system-design` (primer publish de un paquete nuevo a veces exige token con write en el scope).
 
 ### Netlify
 
