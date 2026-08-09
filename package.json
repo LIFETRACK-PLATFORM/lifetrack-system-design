@@ -5,7 +5,7 @@
   "description": "Nightframe — reusable design system UI library for LifeTrack, built with React, TypeScript and Tailwind CSS v4.",
   "license": "UNLICENSED",
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/",
     "tag": "dev"
   },

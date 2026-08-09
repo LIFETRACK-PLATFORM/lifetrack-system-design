@@ -4,7 +4,7 @@ Nightframe — the reusable design system UI library for LifeTrack. React 19 + T
 
 ## Install
 
-Published to npm as `@lifetrack/system-design` (restricted scope — requires npm org access).
+Published to npm as `@lifetrack/system-design` (tag `dev` en develop; `latest` en releases estables).
 
 ```bash
 pnpm add @lifetrack/system-design
