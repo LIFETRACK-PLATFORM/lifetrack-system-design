@@ -14,9 +14,9 @@ type Story = StoryObj<typeof Separator>
 export const Default: Story = {
   render: (args) => (
     <div style={{ width: 300 }}>
-      <div>Section one</div>
+      <div>Sección uno</div>
       <Separator {...args} style={{ margin: "12px 0" }} />
-      <div>Section two</div>
+      <div>Sección dos</div>
     </div>
   ),
 }
@@ -24,9 +24,9 @@ export const Default: Story = {
 export const Vertical: Story = {
   render: (args) => (
     <div style={{ display: "flex", alignItems: "center", height: 40, gap: 12 }}>
-      <span>Left</span>
+      <span>Izquierda</span>
       <Separator {...args} orientation="vertical" />
-      <span>Right</span>
+      <span>Derecha</span>
     </div>
   ),
 }

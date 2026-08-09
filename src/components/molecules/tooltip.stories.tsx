@@ -16,9 +16,9 @@ export const Default: Story = {
     <div style={{ padding: 40 }}>
       <TooltipProvider>
         <Tooltip defaultOpen>
-          <TooltipTrigger>Hover me</TooltipTrigger>
+          <TooltipTrigger>Botón</TooltipTrigger>
           <TooltipContent>
-            <p>Add to library</p>
+            <p>Editar plan</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

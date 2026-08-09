@@ -23,8 +23,8 @@ type Story = StoryObj<typeof Avatar>
 export const Default: Story = {
   render: (args) => (
     <Avatar {...args}>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-      <AvatarFallback>CN</AvatarFallback>
+      <AvatarImage src="https://i.pravatar.cc/128?u=sofia-ramos" alt="Sofía Ramos" />
+      <AvatarFallback>SR</AvatarFallback>
     </Avatar>
   ),
 }
@@ -32,8 +32,8 @@ export const Default: Story = {
 export const WithFallback: Story = {
   render: (args) => (
     <Avatar {...args}>
-      <AvatarImage src="https://broken-url.example/none.png" alt="Unknown user" />
-      <AvatarFallback>JD</AvatarFallback>
+      <AvatarImage src="https://broken-url.example/none.png" alt="Julián Castro" />
+      <AvatarFallback>JC</AvatarFallback>
     </Avatar>
   ),
 }

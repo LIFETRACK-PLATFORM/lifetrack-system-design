@@ -6,7 +6,7 @@ const meta: Meta<typeof Textarea> = {
   title: "Atoms/Textarea",
   component: Textarea,
   args: {
-    placeholder: "Type your message here.",
+    placeholder: "Notas sobre el plan de rehabilitación...",
   },
 }
 

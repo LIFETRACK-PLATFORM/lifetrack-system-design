@@ -6,7 +6,7 @@ const meta: Meta<typeof Label> = {
   title: "Atoms/Label",
   component: Label,
   args: {
-    children: "Your email address",
+    children: "Correo electrónico",
   },
 }
 

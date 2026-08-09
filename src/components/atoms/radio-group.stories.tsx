@@ -7,7 +7,7 @@ const meta: Meta<typeof RadioGroup> = {
   title: "Atoms/RadioGroup",
   component: RadioGroup,
   args: {
-    defaultValue: "comfortable",
+    defaultValue: "familiar",
   },
 }
 
@@ -19,16 +19,16 @@ export const Default: Story = {
   render: (args) => (
     <RadioGroup {...args} style={{ display: "grid", gap: 12 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <RadioGroupItem value="default" id="r1" />
-        <Label htmlFor="r1">Default</Label>
+        <RadioGroupItem value="individual" id="r1" />
+        <Label htmlFor="r1">Individual</Label>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <RadioGroupItem value="comfortable" id="r2" />
-        <Label htmlFor="r2">Comfortable</Label>
+        <RadioGroupItem value="familiar" id="r2" />
+        <Label htmlFor="r2">Familiar</Label>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <RadioGroupItem value="compact" id="r3" />
-        <Label htmlFor="r3">Compact</Label>
+        <RadioGroupItem value="profesional" id="r3" />
+        <Label htmlFor="r3">Profesional</Label>
       </div>
     </RadioGroup>
   ),

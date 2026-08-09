@@ -14,13 +14,17 @@ type Story = StoryObj<typeof Tabs>
 export const Default: Story = {
   render: () => (
     <div style={{ width: 320 }}>
-      <Tabs defaultValue="account">
+      <Tabs defaultValue="resumen">
         <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="resumen">Resumen</TabsTrigger>
+          <TabsTrigger value="actividades">Actividades</TabsTrigger>
+          <TabsTrigger value="documentos">Documentos</TabsTrigger>
+          <TabsTrigger value="configuracion">Configuración</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">Make changes to your account here.</TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="resumen">Vista general del plan de rehabilitación.</TabsContent>
+        <TabsContent value="actividades">Historial de sesiones y actividades.</TabsContent>
+        <TabsContent value="documentos">Estudios e informes médicos.</TabsContent>
+        <TabsContent value="configuracion">Preferencias del plan.</TabsContent>
       </Tabs>
     </div>
   ),

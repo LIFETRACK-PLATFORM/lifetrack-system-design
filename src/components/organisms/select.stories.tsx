@@ -13,19 +13,18 @@ export default meta
 type Story = StoryObj<typeof Select>
 
 function SelectDemo() {
-  const [value, setValue] = React.useState<string>()
+  const [value, setValue] = React.useState<string>("tratamiento")
 
   return (
     <Select value={value} onValueChange={setValue}>
-      <SelectTrigger style={{ width: 200 }}>
-        <SelectValue placeholder="Select a fruit" />
+      <SelectTrigger style={{ width: 220 }}>
+        <SelectValue placeholder="Etapa" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="apple">Apple</SelectItem>
-        <SelectItem value="banana">Banana</SelectItem>
-        <SelectItem value="blueberry">Blueberry</SelectItem>
-        <SelectItem value="grapes">Grapes</SelectItem>
-        <SelectItem value="pineapple">Pineapple</SelectItem>
+        <SelectItem value="evaluacion">Evaluación</SelectItem>
+        <SelectItem value="tratamiento">Tratamiento</SelectItem>
+        <SelectItem value="seguimiento">Seguimiento</SelectItem>
+        <SelectItem value="alta">Alta</SelectItem>
       </SelectContent>
     </Select>
   )

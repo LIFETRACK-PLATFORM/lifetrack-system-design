@@ -16,8 +16,8 @@ export const Default: Story = {
   render: () => (
     <Alert>
       <InfoIcon />
-      <AlertTitle>Heads up</AlertTitle>
-      <AlertDescription>This is an informational message for the user.</AlertDescription>
+      <AlertTitle>Atención</AlertTitle>
+      <AlertDescription>Este es un mensaje informativo para el usuario.</AlertDescription>
     </Alert>
   ),
 }
@@ -26,8 +26,8 @@ export const Destructive: Story = {
   render: () => (
     <Alert variant="destructive">
       <OctagonXIcon />
-      <AlertTitle>Something went wrong</AlertTitle>
-      <AlertDescription>Your changes could not be saved. Please try again.</AlertDescription>
+      <AlertTitle>Algo salió mal</AlertTitle>
+      <AlertDescription>No se pudieron guardar los cambios. Intentá de nuevo.</AlertDescription>
     </Alert>
   ),
 }

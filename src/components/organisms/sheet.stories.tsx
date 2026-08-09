@@ -25,18 +25,18 @@ export const Default: Story = {
   render: () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Open sheet</Button>
+        <Button variant="outline">Filtrar pacientes</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
+          <SheetTitle>Filtrar pacientes</SheetTitle>
           <SheetDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Ajustá los filtros para encontrar pacientes por etapa o estado.
           </SheetDescription>
         </SheetHeader>
         <SheetFooter>
           <SheetClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline">Cerrar</Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

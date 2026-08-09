@@ -22,11 +22,11 @@ export const Default: Story = {
   render: () => (
     <div style={{ padding: 80 }}>
       <Popover defaultOpen>
-        <PopoverTrigger>Open popover</PopoverTrigger>
+        <PopoverTrigger>Ver detalles</PopoverTrigger>
         <PopoverContent>
           <PopoverHeader>
-            <PopoverTitle>Dimensions</PopoverTitle>
-            <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+            <PopoverTitle>Sesión</PopoverTitle>
+            <PopoverDescription>Duración estimada: 45 minutos.</PopoverDescription>
           </PopoverHeader>
         </PopoverContent>
       </Popover>

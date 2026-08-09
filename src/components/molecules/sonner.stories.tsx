@@ -24,9 +24,9 @@ export const Default: Story = {
           background: "#fff",
           cursor: "pointer",
         }}
-        onClick={() => toast("Example notification")}
+        onClick={() => toast("Plan actualizado correctamente.")}
       >
-        Show toast
+        Mostrar notificación
       </button>
     </div>
   ),

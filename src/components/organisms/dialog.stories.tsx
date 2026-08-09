@@ -25,20 +25,20 @@ export const Default: Story = {
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit profile</Button>
+        <Button variant="outline">Editar plan</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Editar plan</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Modificá los detalles del plan de rehabilitación de Sofía Ramos.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">Cancelar</Button>
           </DialogClose>
-          <Button>Save changes</Button>
+          <Button>Guardar cambios</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

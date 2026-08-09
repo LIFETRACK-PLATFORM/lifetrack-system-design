@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { Calculator, Calendar, Settings, Smile, User } from "lucide-react"
+import { Calendar, Search, Settings, TrendingUp, User } from "lucide-react"
 
 import {
   Command,
@@ -25,33 +25,33 @@ export const Default: Story = {
   render: () => (
     <div style={{ width: 350, border: "1px solid #e2e2e2", borderRadius: 8 }}>
       <Command>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Buscar tareas, personas, movimientos..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
+          <CommandEmpty>Sin resultados.</CommandEmpty>
+          <CommandGroup heading="Sugerencias">
             <CommandItem>
               <Calendar />
-              <span>Calendar</span>
+              <span>Calendario</span>
             </CommandItem>
             <CommandItem>
-              <Smile />
-              <span>Search Emoji</span>
+              <Search />
+              <span>Buscar paciente</span>
             </CommandItem>
             <CommandItem>
-              <Calculator />
-              <span>Calculator</span>
+              <TrendingUp />
+              <span>Finanzas</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Settings">
+          <CommandGroup heading="Configuración">
             <CommandItem>
               <User />
-              <span>Profile</span>
+              <span>Perfil</span>
               <CommandShortcut>⌘P</CommandShortcut>
             </CommandItem>
             <CommandItem>
               <Settings />
-              <span>Settings</span>
+              <span>Ajustes</span>
               <CommandShortcut>⌘S</CommandShortcut>
             </CommandItem>
           </CommandGroup>

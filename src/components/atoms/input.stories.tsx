@@ -7,7 +7,7 @@ const meta: Meta<typeof Input> = {
   component: Input,
   args: {
     type: "email",
-    placeholder: "Email",
+    placeholder: "nombre@lifetrack.os",
   },
 }
 
@@ -16,3 +16,18 @@ export default meta
 type Story = StoryObj<typeof Input>
 
 export const Default: Story = {}
+
+export const Invalid: Story = {
+  args: {
+    type: "text",
+    placeholder: "monto inválido",
+    "aria-invalid": true,
+  },
+}
+
+export const Disabled: Story = {
+  args: {
+    placeholder: "bloqueado",
+    disabled: true,
+  },
+}

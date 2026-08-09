@@ -12,12 +12,12 @@ export default meta
 
 type Story = StoryObj<typeof Combobox>
 
-const frameworks: ComboboxOption[] = [
-  { value: "next", label: "Next.js" },
-  { value: "sveltekit", label: "SvelteKit" },
-  { value: "nuxt", label: "Nuxt.js" },
-  { value: "remix", label: "Remix" },
-  { value: "astro", label: "Astro" },
+const patients: ComboboxOption[] = [
+  { value: "sofia-ramos", label: "Sofía Ramos" },
+  { value: "sofia-beltran", label: "Sofía Beltrán" },
+  { value: "sofia-ianni", label: "Sofía Ianni" },
+  { value: "julian-castro", label: "Julián Castro" },
+  { value: "mora-peralta", label: "Mora Peralta" },
 ]
 
 function ComboboxDemo() {
@@ -26,10 +26,10 @@ function ComboboxDemo() {
   return (
     <div style={{ width: 250 }}>
       <Combobox
-        options={frameworks}
+        options={patients}
         value={value}
         onValueChange={setValue}
-        placeholder="Select framework..."
+        placeholder="Buscar paciente..."
       />
     </div>
   )
