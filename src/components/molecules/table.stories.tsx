@@ -9,6 +9,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 const meta: Meta<typeof Table> = {
   title: "Molecules/Table",
   component: Table,
+  decorators: [
+    (Story) => (
+      <div className="lt:bg-background lt:p-8">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta
@@ -82,7 +89,7 @@ export const Default: Story = {
       <TableHeader>
         <TableRow>
           <TableHead className="lt:text-text-1">
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <span className="lt:inline-flex lt:items-center lt:gap-1">
               Paciente <ArrowUp size={12} strokeWidth={2} />
             </span>
           </TableHead>
@@ -94,8 +101,8 @@ export const Default: Story = {
       <TableBody>
         {PATIENTS.map((p) => (
           <TableRow key={p.name}>
-            <TableCell>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <TableCell className="lt:font-semibold lt:text-text-1">
+              <div className="lt:flex lt:items-center lt:gap-2.5">
                 <Avatar size="sm">
                   <AvatarFallback>{p.initials}</AvatarFallback>
                 </Avatar>
@@ -107,7 +114,7 @@ export const Default: Story = {
               <Progress
                 value={p.progress}
                 indicatorClassName={INDICATOR_TONE_CLASS[p.progressTone]}
-                style={{ width: 120 }}
+                className="lt:w-[120px]"
               />
             </TableCell>
             <TableCell>

@@ -1,1 +1,176 @@
 @import "./styles.css";
+
+/* Catalog layout — plain CSS so spacing always applies in Storybook */
+.catalog-page {
+  min-height: 100vh;
+  background: var(--lt-background);
+  padding: 48px 24px;
+}
+
+@media (min-width: 640px) {
+  .catalog-page {
+    padding: 48px 40px;
+  }
+}
+
+.catalog-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.catalog-header {
+  border-radius: 16px;
+  border: 1px solid var(--lt-border);
+  background: var(--lt-surface-1);
+  padding: 32px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.catalog-section {
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--lt-border);
+  background: var(--lt-surface-1);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.catalog-section-head {
+  border-bottom: 1px solid var(--lt-border);
+  background: color-mix(in srgb, var(--lt-surface-2) 60%, transparent);
+  padding: 16px 24px;
+}
+
+.catalog-section-title {
+  margin: 0;
+  font-family: var(--font-jetbrains-mono, "JetBrains Mono", ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lt-primary);
+}
+
+.catalog-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.catalog-group {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--lt-border) 70%, transparent);
+  background: color-mix(in srgb, var(--lt-surface-2) 40%, transparent);
+  padding: 20px;
+}
+
+.catalog-group-label {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--lt-text-3);
+}
+
+.catalog-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.catalog-row--end {
+  align-items: flex-end;
+}
+
+.catalog-grid-2 {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .catalog-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.catalog-grid-split {
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 1280px) {
+  .catalog-grid-split {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.catalog-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 28rem;
+}
+
+.catalog-chip label,
+.catalog-radio-option label {
+  color: var(--lt-text-1);
+}
+
+.catalog-form-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--lt-text-3);
+}
+
+.catalog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--lt-border) 60%, transparent);
+  background: var(--lt-surface-1);
+  padding: 12px 16px;
+}
+
+.catalog-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.catalog-radio-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--lt-border) 60%, transparent);
+  background: var(--lt-surface-1);
+  padding: 12px 16px;
+}
+
+.catalog-radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catalog-group-actions {
+  margin-top: 20px;
+}
+
+.catalog-item-box {
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--lt-border) 60%, transparent);
+  background: var(--lt-surface-1);
+  padding: 16px;
+}
+
+.catalog-item-box--wide {
+  width: 12rem;
+}
