@@ -301,6 +301,14 @@ function CatalogPage() {
                   <Label htmlFor="catalog-check">Checkbox</Label>
                 </div>
                 <div className="catalog-chip">
+                  <Checkbox id="catalog-check-success" variant="success" defaultChecked />
+                  <Label htmlFor="catalog-check-success">Success</Label>
+                </div>
+                <div className="catalog-chip">
+                  <Checkbox id="catalog-check-warning" variant="warning" defaultChecked />
+                  <Label htmlFor="catalog-check-warning">Warning</Label>
+                </div>
+                <div className="catalog-chip">
                   <Switch id="catalog-switch" defaultChecked />
                   <Label htmlFor="catalog-switch">Switch</Label>
                 </div>
@@ -312,6 +320,12 @@ function CatalogPage() {
                   <div className="catalog-radio-option">
                     <RadioGroupItem value="b" id="catalog-r2" />
                     <Label htmlFor="catalog-r2">B</Label>
+                  </div>
+                </RadioGroup>
+                <RadioGroup variant="success" defaultValue="x" className="catalog-radio-group">
+                  <div className="catalog-radio-option">
+                    <RadioGroupItem value="x" id="catalog-r3" />
+                    <Label htmlFor="catalog-r3">Success</Label>
                   </div>
                 </RadioGroup>
               </div>
