@@ -1,0 +1,174 @@
+@import "tailwindcss" prefix(lt);
+
+@custom-variant dark (&:is(.dark *));
+
+/* Nightframe design tokens — light is the default, .dark overrides.
+   Consumers toggle by setting `class="dark"` on a root element (e.g. next-themes). */
+:root {
+  --lt-background: #f6f6f7;
+  --lt-foreground: #14141a;
+  --lt-surface: #f6f6f7;
+  --lt-surface-1: #ffffff;
+  --lt-surface-2: #f0f0f2;
+  --lt-surface-3: #e7e7ea;
+  --lt-surface-4: #dbdbdf;
+  --lt-surface-5: #c8c8ce;
+  --lt-border: #e1e1e5;
+  --lt-input: #e1e1e5;
+  --lt-text-1: #14141a;
+  --lt-text-3: #8a8a92;
+  --lt-primary: #7c5cff;
+  --lt-primary-hover: #6a4ae8;
+  --lt-primary-active: #5b3ed6;
+  --lt-accent-tint: #7c5cff;
+  --lt-primary-foreground: #ffffff;
+  --lt-success: #2ca876;
+  --lt-warning: #b96f09;
+  --lt-error: #d8383f;
+  --lt-radius: 0.75rem;
+}
+
+.dark {
+  --lt-background: #0a0a0c;
+  --lt-foreground: #f2f2f4;
+  --lt-surface: #0a0a0c;
+  --lt-surface-1: #111114;
+  --lt-surface-2: #1b1b1f;
+  --lt-surface-3: #242429;
+  --lt-surface-4: #2d2d34;
+  --lt-surface-5: #3a3a42;
+  --lt-border: #2a2a30;
+  --lt-input: #2a2a30;
+  --lt-text-1: #f2f2f4;
+  --lt-text-3: #6e6e76;
+  --lt-primary: #7c5cff;
+  --lt-primary-hover: #8d71ff;
+  --lt-primary-active: #6a4ae8;
+  --lt-accent-tint: #b9acff;
+  --lt-primary-foreground: #ffffff;
+  --lt-success: #3fcb8c;
+  --lt-warning: #f5a623;
+  --lt-error: #f2555a;
+}
+
+@theme inline {
+  --color-background: var(--lt-background);
+  --color-foreground: var(--lt-foreground);
+  --color-surface: var(--lt-surface);
+  --color-surface-1: var(--lt-surface-1);
+  --color-surface-2: var(--lt-surface-2);
+  --color-surface-3: var(--lt-surface-3);
+  --color-surface-4: var(--lt-surface-4);
+  --color-surface-5: var(--lt-surface-5);
+  --color-border: var(--lt-border);
+  --color-input: var(--lt-input);
+  --color-text-1: var(--lt-text-1);
+  --color-text-3: var(--lt-text-3);
+
+  --color-card: var(--lt-surface-1);
+  --color-card-foreground: var(--lt-text-1);
+  --color-popover: var(--lt-surface-2);
+  --color-popover-foreground: var(--lt-text-1);
+  --color-muted: var(--lt-surface-2);
+  --color-muted-foreground: var(--lt-text-3);
+  --color-accent: var(--lt-surface-3);
+  --color-accent-foreground: var(--lt-text-1);
+  --color-ring: var(--lt-primary);
+
+  --color-primary: var(--lt-primary);
+  --color-primary-hover: var(--lt-primary-hover);
+  --color-primary-active: var(--lt-primary-active);
+  --color-accent-tint: var(--lt-accent-tint);
+  --color-primary-foreground: var(--lt-primary-foreground);
+  --color-secondary: var(--lt-surface-3);
+  --color-secondary-foreground: var(--lt-text-1);
+  --color-success: var(--lt-success);
+  --color-warning: var(--lt-warning);
+  --color-error: var(--lt-error);
+  --color-destructive: var(--lt-error);
+  --color-destructive-foreground: #ffffff;
+
+  --font-sans: var(--font-manrope, "Manrope", ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--font-space-grotesk, "Space Grotesk", ui-sans-serif, system-ui, sans-serif);
+  --font-mono: var(--font-jetbrains-mono, "JetBrains Mono", ui-monospace, monospace);
+  --font-label: var(--font-manrope, "Manrope", ui-sans-serif, system-ui, sans-serif);
+  --font-metric: var(--font-jetbrains-mono, "JetBrains Mono", ui-monospace, monospace);
+
+  --spacing-gutter: 20px;
+
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-app: 1280px;
+
+  /* DESIGN: sm 10 / DEFAULT 12 / md 14 */
+  --radius-sm: 0.625rem;
+  --radius-DEFAULT: 0.75rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-full: 9999px;
+
+  --text-display: 56px;
+  --text-display--line-height: 64px;
+  --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-heading-1: 40px;
+  --text-heading-1--line-height: 48px;
+  --text-heading-1--font-weight: 700;
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--font-weight: 600;
+  --text-headline-lg--letter-spacing: -0.01em;
+
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 36px;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+  --text-headline-md--font-weight: 600;
+
+  --text-heading-4: 18px;
+  --text-heading-4--line-height: 26px;
+  --text-heading-4--font-weight: 600;
+
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 26px;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md: 14px;
+  --text-body-md--line-height: 22px;
+  --text-body-md--font-weight: 400;
+
+  --text-label-md: 12px;
+  --text-label-md--line-height: 18px;
+  --text-label-md--font-weight: 500;
+  --text-label-md--letter-spacing: 0.02em;
+
+  --text-metric-lg: 28px;
+  --text-metric-lg--line-height: 34px;
+  --text-metric-lg--font-weight: 700;
+  --text-metric-lg--letter-spacing: -0.02em;
+
+  --text-metric-xl: 28px;
+  --text-metric-xl--line-height: 34px;
+  --text-metric-xl--font-weight: 700;
+  --text-metric-xl--letter-spacing: -0.02em;
+
+  --text-metric-sm: 16px;
+  --text-metric-sm--line-height: 22px;
+  --text-metric-sm--font-weight: 600;
+
+  --shadow-card: none;
+}
+
+@layer base {
+  * {
+    border-color: var(--lt-border);
+  }
+}

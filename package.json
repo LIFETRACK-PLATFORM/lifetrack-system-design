@@ -1,0 +1,103 @@
+{
+  "name": "@lifetrack/system-design",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Nightframe — reusable design system UI library for LifeTrack, built with React, TypeScript and Tailwind CSS v4.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/styles.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "peerDependencies": {
+    "react": ">=19.0.0 <20",
+    "react-dom": ">=19.0.0 <20"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.28.0",
+    "radix-ui": "^1.6.7",
+    "react-day-picker": "^10.0.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0"
+  },
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
+    "build": "npm run build:lib && npm run build:css",
+    "build:lib": "tsup",
+    "build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
+    "build-storybook": "storybook build",
+    "deploy-storybook": "npm run build-storybook && netlify deploy --prod --dir=storybook-static",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "validate": "npm run lint && npm run typecheck && npm test && npm run build:lib",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,cjs,mjs,json,css,md}": "prettier --write"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/addon-interactions": "^8.6.18",
+    "@storybook/react": "8.6.18",
+    "@storybook/react-vite": "^8.6.18",
+    "@tailwindcss/cli": "^4.2.0",
+    "@tailwindcss/vite": "^4.2.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "jsdom": "^29.0.1",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "storybook": "^8.6.18",
+    "tailwindcss": "^4.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.21.0"
+}
