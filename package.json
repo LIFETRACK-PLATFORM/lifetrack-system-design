@@ -1,13 +1,12 @@
 {
   "name": "@lifetrack/system-design",
-  "version": "0.1.1-dev.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Nightframe — reusable design system UI library for LifeTrack, built with React, TypeScript and Tailwind CSS v4.",
   "license": "UNLICENSED",
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/",
-    "tag": "dev"
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,9 @@
-// CD — publish npm + deploy Storybook (igual patrón que Jenkinsfile.cd del backend)
+// CD — deploy Storybook (igual patrón que Jenkinsfile.cd del backend)
 // Job Jenkins: Pipeline clásico, rama develop, Script Path: Jenkinsfile.cd
 // Tip: configurar "Build after other projects" → lifetrack-system-design (CI)
+// El publish a npm se hace a mano (npm 2FA-bypass tokens dejan de servir para publish en CI, ver
+// https://github.blog/changelog/2026-07-08-npm-install-time-security-and-gat-bypass2fa-deprecation/):
+// `pnpm publish --no-git-checks --tag dev` desde una terminal local autenticada.
 
 pipeline {
   agent any
@@ -18,33 +21,6 @@ pipeline {
           corepack prepare pnpm@10.21.0 --activate
           pnpm install --frozen-lockfile
         '''
-      }
-    }
-
-    stage("Publish npm") {
-      steps {
-        withCredentials([string(credentialsId: "npm-publish-token", variable: "NPM_TOKEN")]) {
-          script {
-            def pkgName = sh(script: "node -p \"require('./package.json').name\"", returnStdout: true).trim()
-            def pkgVersion = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
-            def publishTag = pkgVersion.contains("-") ? "dev" : "latest"
-            // Chequeo anónimo ANTES de setear el token (token inválido rompe npm view)
-            def alreadyPublished = sh(
-              script: "npm view ${pkgName}@${pkgVersion} version --registry=https://registry.npmjs.org/ 2>/dev/null",
-              returnStatus: true
-            ) == 0
-
-            if (alreadyPublished) {
-              echo "${pkgName}@${pkgVersion} ya está publicada, no hay nada que hacer."
-            } else {
-              sh '''
-                npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-              '''
-              sh "pnpm publish --no-git-checks --tag ${publishTag}"
-              echo "Publicado ${pkgName}@${pkgVersion} en npm (tag: ${publishTag})."
-            }
-          }
-        }
       }
     }
 
