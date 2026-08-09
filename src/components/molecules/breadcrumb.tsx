@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronRight, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
@@ -13,7 +13,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "lt:flex lt:flex-wrap lt:items-center lt:gap-1.5 lt:text-sm lt:break-words lt:text-muted-foreground lt:sm:gap-2.5",
+        "lt:flex lt:flex-wrap lt:items-center lt:gap-2 lt:text-[13px] lt:break-words",
         className
       )}
       {...props}
@@ -43,7 +43,7 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("lt:transition-colors lt:hover:text-foreground", className)}
+      className={cn("lt:text-text-3 lt:transition-colors lt:hover:text-text-1", className)}
       {...props}
     />
   )
@@ -56,7 +56,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("lt:font-normal lt:text-foreground", className)}
+      className={cn("lt:font-semibold lt:text-text-1", className)}
       {...props}
     />
   )
@@ -68,10 +68,10 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("lt:[&>svg]:size-3.5", className)}
+      className={cn("lt:text-text-3", className)}
       {...props}
     >
-      {children ?? <ChevronRight />}
+      {children ?? "/"}
     </li>
   )
 }

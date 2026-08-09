@@ -1,0 +1,73 @@
+// CD — publish npm + deploy Storybook (igual patrón que Jenkinsfile.cd del backend)
+// Job Jenkins: Pipeline clásico, rama develop, Script Path: Jenkinsfile.cd
+// Tip: configurar "Build after other projects" → lifetrack-system-design (CI)
+
+pipeline {
+  agent any
+
+  tools {
+    nodejs "NodeJS-20"
+  }
+
+  stages {
+    stage("Install") {
+      steps {
+        sh '''
+          set -e
+          corepack enable
+          corepack prepare pnpm@10.21.0 --activate
+          pnpm install --frozen-lockfile
+        '''
+      }
+    }
+
+    stage("Publish npm") {
+      steps {
+        withCredentials([string(credentialsId: "npm-publish-token", variable: "NPM_TOKEN")]) {
+          script {
+            sh "npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+
+            def pkgName = sh(script: "node -p \"require('./package.json').name\"", returnStdout: true).trim()
+            def pkgVersion = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
+            def alreadyPublished = sh(
+              script: "npm view ${pkgName}@${pkgVersion} version 2>/dev/null",
+              returnStatus: true
+            ) == 0
+
+            if (alreadyPublished) {
+              echo "${pkgName}@${pkgVersion} ya está publicada, no hay nada que hacer."
+            } else {
+              sh "pnpm publish --no-git-checks"
+              echo "Publicado ${pkgName}@${pkgVersion} en npm."
+            }
+          }
+        }
+      }
+    }
+
+    stage("Deploy Storybook") {
+      steps {
+        withCredentials([
+          string(credentialsId: "netlify-auth-token", variable: "NETLIFY_AUTH_TOKEN"),
+          string(credentialsId: "netlify-site-id", variable: "NETLIFY_SITE_ID"),
+        ]) {
+          sh '''
+            set -e
+            corepack enable
+            pnpm run build-storybook
+            pnpm exec netlify deploy --prod --dir=storybook-static --site=${NETLIFY_SITE_ID}
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Deploy OK - system-design #${env.BUILD_NUMBER}"
+    }
+    failure {
+      echo "Deploy FAILED - system-design #${env.BUILD_NUMBER}"
+    }
+  }
+}

@@ -1,9 +1,17 @@
 {
   "name": "@lifetrack/system-design",
   "version": "0.1.0-dev.0",
-  "private": true,
+  "private": false,
   "description": "Nightframe — reusable design system UI library for LifeTrack, built with React, TypeScript and Tailwind CSS v4.",
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/LIFETRACK-PLATFORM/lifetrack-system-design.git"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -47,6 +55,7 @@
     "build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
     "build-storybook": "storybook build",
     "deploy-storybook": "npm run build-storybook && netlify deploy --prod --dir=storybook-static",
+    "prepublishOnly": "npm run build",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
@@ -90,6 +99,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
+    "netlify-cli": "^23.13.0",
     "prettier": "^3.8.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

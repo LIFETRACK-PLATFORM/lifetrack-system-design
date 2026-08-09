@@ -6,6 +6,13 @@ import { Combobox, type ComboboxOption } from "./combobox"
 const meta: Meta<typeof Combobox> = {
   title: "Organisms/Combobox",
   component: Combobox,
+  decorators: [
+    (Story) => (
+      <div className="lt:bg-background lt:p-8">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta

@@ -13,6 +13,13 @@ import {
 const meta: Meta<typeof Pagination> = {
   title: "Molecules/Pagination",
   component: Pagination,
+  decorators: [
+    (Story) => (
+      <div className="lt:bg-background lt:p-8">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta
