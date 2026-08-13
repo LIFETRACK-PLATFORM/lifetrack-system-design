@@ -52,7 +52,7 @@ This package's Tailwind build uses the `lt:` prefix (`@import "tailwindcss" pref
 
 **Molecules** — `alert`, `breadcrumb`, `calendar`, `card`, `empty-state`, `pagination`, `popover`, `sonner` (Toaster), `table`, `tabs`, `tooltip`
 
-**Organisms** — `alert-dialog`, `combobox`, `command`, `dialog`, `dropdown-menu`, `select`, `sheet`
+**Organisms** — `alert-dialog`, `combobox`, `command`, `date-picker`, `dialog`, `dropdown-menu`, `select`, `sheet`
 
 ## Development
 
